@@ -1,5 +1,11 @@
 
 
+#' Calculate TMM normalization factors
+#' @param  x: a matrix of TPM values, for which normalization factors are calculated
+#' @param  ...: other parameters to be passed to calcTMMFactors
+#' @return the TMM normalized data
+#' @examples
+#' allTMM = normalizeTMM(allTPM, verbose=0);
 normalizeTMM = function(x, ...){
   normFactors = calcTMMFactors(x, ...);
   for (c in 1: ncol(x)){
@@ -9,10 +15,15 @@ normalizeTMM = function(x, ...){
 }
 
 #' Calculate TMM normalization factors
-#' @param  trimByExpr = c(0.3,0.1): the fraction of data points to remove from the lowly expressed and highly expressed (respectively) genes
-#' @param  
-#' @param  
-#' @param  
+#' @param  x: a matrix of TPM values, for which normalization factors are calculated
+#' @param  trimByExpr: the fraction of data points to remove from the lowly expressed and highly expressed (respectively) genes
+#' @param  trimByRatio: the fraction of data points to remove from either side of the log ratios of the cell/reference
+#' @param  referenceSample: the vector of gene expression values that are used as a reference sample. Defaults to the median of non-0 expression values
+#' @param  zeroExpression: the expression value is considered 0
+#' @param  verbose: verbosity of messaging; will report every nth cell for verbose>0
+#' @return the normalization factors that each sample should be divided by
+#' @examples
+#' normFactors = calcTMMFactors(tpmMatrix);
 calcTMMFactors = function(x, trimByExpr = c(0.3,0.1), trimByRatio = c(0.25,0.25), referenceSample=NULL, zeroExpression=0, verbose=0){
   #x is a matrix of TPMs (genes x samples)
   #get the median expression of each gene
