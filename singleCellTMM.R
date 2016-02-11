@@ -2,12 +2,15 @@
 
 #' Calculate TMM normalization factors
 #' @param  x: a matrix of TPM values, for which normalization factors are calculated
+#' @param  normFactors: a vector of normalization factors to divide by if provided, otherwise runs calcTMMFactors
 #' @param  ...: other parameters to be passed to calcTMMFactors
 #' @return the TMM normalized data
 #' @examples
 #' allTMM = normalizeTMM(allTPM, verbose=0);
-normalizeTMM = function(x, ...){
-  normFactors = calcTMMFactors(x, ...);
+normalizeTMM = function(x, normFactors=NULL, ...){
+  if (is.null(normFactors)){
+    normFactors = calcTMMFactors(x, ...);
+  }
   for (c in 1: ncol(x)){
     x[,c] = x[,c]/normFactors[c];
   }
