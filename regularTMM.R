@@ -89,7 +89,11 @@ calcTMMFactors = function(x, trimByExpr = c(0.1,0.1), trimByRatio = c(0.25,0.25)
       message(sprintf("WARNING: fewer than 50 genes used to center sample %i (#genes = %i)",c,sum(keepCurSample)));
     }
     if (sum(keepCurSample)>0){
-      normFactors[c] = (2^curOffset);
+      if (isLog){
+        normFactors[c] = (curOffset);
+      }else{
+        normFactors[c] = (2^curOffset);
+      }
     }
   }
   return(normFactors);
