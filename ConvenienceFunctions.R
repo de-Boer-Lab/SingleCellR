@@ -29,6 +29,6 @@ ranksumROC = function(x,y,na.rm=T,...){
     y=na.rm(y);
   }
   curTest = wilcox.test(x,y,...);
-  curTest$AUROC = curTest$statistic/(length(x)*length(y))
+  curTest$AUROC = (curTest$statistic/length(x))/length(y)
   return(curTest)
 }
