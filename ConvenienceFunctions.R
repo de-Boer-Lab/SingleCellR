@@ -32,3 +32,39 @@ ranksumROC = function(x,y,na.rm=T,...){
   curTest$AUROC = (curTest$statistic/length(x))/length(y)
   return(curTest)
 }
+
+inputDataFromFilesAsMeltedTable = function(d, fileCols, formatStr="%s", ...){
+  i=1;
+  curData = read.table(do.call(sprintf, c(formatStr,d[i,fileCols])), ...);
+  
+  inputData = data.frame(i = 1:(nrow(curData) * nrow(d)));
+  for (c in names(curData)){ # add col names from curData
+    inputData[c] = NA
+  }
+  if (all(inputData$i == 1:(nrow(curData) * nrow(d)))){
+    inputData$i=NULL;
+  }
+  nrow(inputData)
+  for (c in names(d)){ # add col names from d (list of inputs)
+    inputData[c]=d[i,c];
+  }
+  
+  z=1;
+  for (i in 1:nrow(d)){
+    message(i/nrow(d));
+    curData = read.table(do.call(sprintf, c(formatStr,d[i,fileCols])), ...);
+    for (c in names(d)){
+      curData[c]=d[i,c];
+    }
+    
+    if ((nrow(curData)+z-1) > nrow(inputData)){
+      inputData = inputData[1:(z-1),];
+      inputData = rbind(inputData,curData)
+    }else{
+      inputData[z:(nrow(curData)+z-1),] = curData;
+    }
+    z=z+nrow(curData);
+  }
+  inputData = inputData[1:(z-1),];
+  return(inputData);
+}
