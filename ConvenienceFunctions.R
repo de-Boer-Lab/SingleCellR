@@ -35,7 +35,7 @@ ranksumROC = function(x,y,na.rm=T,...){
 
 inputDataFromFilesAsMeltedTable = function(d, fileCols, formatStr="%s", ...){
   i=1;
-  curData = read.table(do.call(sprintf, c(formatStr,d[i,fileCols])), ...);
+  curData = read.table(do.call(sprintf, as.list(c(formatStr,d[i,fileCols]))), ...);
   
   inputData = data.frame(i = 1:(nrow(curData) * nrow(d)));
   for (c in names(curData)){ # add col names from curData
@@ -52,7 +52,7 @@ inputDataFromFilesAsMeltedTable = function(d, fileCols, formatStr="%s", ...){
   z=1;
   for (i in 1:nrow(d)){
     message(i/nrow(d));
-    curData = read.table(do.call(sprintf, c(formatStr,d[i,fileCols])), ...);
+    curData = read.table(do.call(sprintf, as.list(c(formatStr,d[i,fileCols]))), ...);
     for (c in names(d)){
       curData[c]=d[i,c];
     }
