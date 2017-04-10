@@ -68,3 +68,39 @@ inputDataFromFilesAsMeltedTable = function(d, fileCols, formatStr="%s", ...){
   inputData = inputData[1:(z-1),];
   return(inputData);
 }
+
+
+#Compares the original eigen values to permuted matrix values (done ntimes) for each PC, each time removing the last nPCs significant PCs, stopping when one is not significant. 
+findSigPCs = function(myPCA, nfolds=101, alpha=0.01){
+  permPCAStats = data.frame();
+  stillSig=T;
+  nPCs = 0
+  rePCA = prcomp(t(myPCA$rotation) * matrix(rep(myPCA$sdev,times=nrow(myPCA$rotation)),nrow=ncol(myPCA$rotation), ncol=nrow(myPCA$rotation)),center = F, scale. = F);
+  while(stillSig){
+    curPCAStats = data.frame();
+    for (i in 1:nfolds){
+      remainder = ncol(myPCA$rotation) - nPCs;
+      x1 = as.vector(t(myPCA$rotation[,(nPCs+1):ncol(myPCA$rotation)])* matrix(rep(myPCA$sdev[(nPCs+1):ncol(myPCA$rotation)],times=nrow(myPCA$rotation)),nrow=remainder,ncol=nrow(myPCA$rotation)))
+      x1 = x1[sample(length(x1),length(x1))]
+      x1 = matrix(x1,nrow=nrow(myPCA$rotation),ncol=remainder)
+      curPCA = prcomp(t(x1),center = F, scale. = F);
+      curPCAStats = rbind(curPCAStats, data.frame(sdev = curPCA$sdev, perm=i, eig = curPCA$sdev^2, ranks = 1:length(curPCA$sdev),nPCs=nPCs));
+    }
+    curPCAStats=curPCAStats[order(curPCAStats$sdev,decreasing = T)[1:nfolds],]
+    message(sprintf("PC=%i; P=%g; sdev_act=%g, sdev_max_perm=%g",nPCs+1, mean(rePCA$sdev[nPCs+1] < curPCAStats$sdev),rePCA$sdev[nPCs+1], max(curPCAStats$sdev)))
+    
+    if (mean(rePCA$sdev[nPCs+1] > curPCAStats$sdev) < (1-alpha)){
+      stillSig=F
+    }else{
+      nPCs = nPCs+1;
+    }
+    if(nPCs >= ncol(myPCA$rotation)){
+      stillSig=F;
+    }
+    permPCAStats = rbind(permPCAStats, curPCAStats)
+  }
+  myPCA$permPCA = permPCAStats;
+  myPCA$rePCA_sdev = rePCA$sdev;
+  myPCA$nPCs = nPCs
+  return(myPCA)
+}
