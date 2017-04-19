@@ -71,7 +71,7 @@ inputDataFromFilesAsMeltedTable = function(d, fileCols, formatStr="%s", ...){
 
 
 #Compares the original eigen values to permuted matrix values (done ntimes) for each PC, each time removing the last nPCs significant PCs, stopping when one is not significant. 
-findSigPCs = function(myPCA, nfolds=101, alpha=0.01){
+findSigPCs = function(myPCA, nfolds=10, alpha=0.01){
   permPCAStats = data.frame();
   stillSig=T;
   nPCs = 0
