@@ -104,3 +104,20 @@ findSigPCs = function(myPCA, nfolds=10, alpha=0.01){
   myPCA$nPCs = nPCs
   return(myPCA)
 }
+
+proportionalDownsample = function(x, nbins=100, desiredN=100000){
+  minX = min(x);
+  maxX = max(x);
+  range = maxX-minX;
+  window = range/nbins;
+  expectedPerBin = desiredN/nbins;
+  keepVector = rep(F, length(x))
+  randVec = runif(length(x));
+  for (i in 1:nbins){
+    thesePoints = x > (minX + window*(i-1)) & x <= (minX + window*(i))
+    numHere = sum(thesePoints)
+    keepP = expectedPerBin/numHere; #prob of keeping
+    keepVector = keepVector | (thesePoints & (randVec < keepP));
+  }
+  return (keepVector)
+}
