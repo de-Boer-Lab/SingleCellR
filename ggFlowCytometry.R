@@ -3,8 +3,10 @@
 fcsGate = function(p,n=4, draw=T){
   require(grid)
   pData = ggplot_build(p)
-  xrange=pData$layout$panel_ranges[[1]]$x.range
-  yrange=pData$layout$panel_ranges[[1]]$y.range
+  #xrange=pData$layout$panel_ranges[[1]]$x.range
+  #yrange=pData$layout$panel_ranges[[1]]$y.range
+  xrange = pData$plot$coordinates$limits$x;
+  yrange = pData$plot$coordinates$limits$y;
   xName=as.character(pData$plot$mapping$x)
   yName=as.character(pData$plot$mapping$y)
   points = data.frame(n=1:n)
