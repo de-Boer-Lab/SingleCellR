@@ -121,3 +121,16 @@ proportionalDownsample = function(x, nbins=100, desiredN=100000){
   }
   return (keepVector)
 }
+
+#allMotifStimCorrs = m2apply(log(eps+allProbeActivity[grepl("_A(_RC)?$", allProbeActivity$ID),names(allProbeActivity) %in% goodMotifIDs]), allProbeActivity[grepl("_A(_RC)?$", allProbeActivity$ID),grepl("_ratio",names(allProbeActivity))], FUN = function(x,y){xmin = as.numeric(quantile(x,probs=1-0.035)); cor(x[x>xmin],y[x>xmin], use="pairwise.complete.obs")})
+m2apply = function(x,y,FUN, ...){
+  results = matrix(nrow=ncol(x), ncol=ncol(y));
+  row.names(results)=colnames(x);
+  colnames(results)=colnames(y)
+  for(xi in 1:ncol(x)){
+    for(yi in 1:ncol(y)){
+      results[xi,yi]=FUN(x[,xi],y[,yi], ...);
+    }
+  }
+  return(results)
+}
