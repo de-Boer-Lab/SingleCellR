@@ -134,3 +134,9 @@ m2apply = function(x,y,FUN, ...){
   }
   return(results)
 }
+
+fixExcelGenesHuman = function(x){
+  x = gsub("([0-9]+)-Mar","MARCH\\1", x)
+  x = gsub("([0-9]+)-Sep","SEPT\\1", x)
+  x = gsub("1-Dec","DELEC1", x)
+}
