@@ -140,3 +140,18 @@ fixExcelGenesHuman = function(x){
   x = gsub("([0-9]+)-Sep","SEPT\\1", x)
   x = gsub("1-Dec","DELEC1", x)
 }
+
+#uses a sliding window along x to calculate Z-scores in y
+rollingZScores = function(x,y, width, partial = floor(width/10), ...){
+  require(zoo)
+  myData= data.frame(x=x,y=y)
+  myData$order = 1:nrow(myData);
+  myData = myData[order(myData$x),]
+  myData$rollMean = rollapply(myData$y, FUN = mean, width=width, fill=NA, partial=partial, ...)
+  myData$rollSD = rollapply(myData$y, FUN = sd, width=width, fill=NA, partial=partial, ...)
+  myData$rollMean[1:(min(which(!is.na(myData$rollMean)))-1)] = myData$rollMean[min(which(!is.na(myData$rollMean)))];
+  myData$rollSD[1:(min(which(!is.na(myData$rollSD)))-1)] = myData$rollSD[min(which(!is.na(myData$rollSD)))];
+  myData$rollZ = (myData$y-myData$rollMean)/myData$rollSD;
+  myData = myData[myData$order,]
+  return(myData)
+}
