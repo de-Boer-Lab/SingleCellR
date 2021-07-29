@@ -152,6 +152,6 @@ rollingZScores = function(x,y, width, partial = floor(width/10), ...){
   myData$rollMean[1:(min(which(!is.na(myData$rollMean)))-1)] = myData$rollMean[min(which(!is.na(myData$rollMean)))];
   myData$rollSD[1:(min(which(!is.na(myData$rollSD)))-1)] = myData$rollSD[min(which(!is.na(myData$rollSD)))];
   myData$rollZ = (myData$y-myData$rollMean)/myData$rollSD;
-  myData = myData[myData$order,]
+  myData = myData[order(myData$order),]
   return(myData)
 }
